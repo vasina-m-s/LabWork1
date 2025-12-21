@@ -27,6 +27,7 @@ make tests
 
 ## Run
 ./lab
+
 <input\_file.bmp>
 
 ### Example:
@@ -46,5 +47,6 @@ The program will generate:
 ## clean
 
 make clean
+
 
 
