@@ -37,13 +37,14 @@ sample.bmp
 
 The program will generate:
 
-rotated_cw.bmp (Rotated CW)
+`rotated_cw.bmp` (Rotated CW)
 
-rotated_ccw.bmp (Rotated CCW)
+`rotated_ccw.bmp` (Rotated CCW)
 
-filtr.bmp (Gauss Filtr)
+`filtr.bmp` (Gauss Filtr)
 
 ## clean
 
 make clean
+
 
