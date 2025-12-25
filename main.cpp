@@ -14,6 +14,7 @@
 
 int main() {
 	std::string filename;
+	std::cout << "Enter BMP filename: ";
 	std::getline(std::cin, filename);
 
 	try
