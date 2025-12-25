@@ -9,18 +9,18 @@
 #include <stdexcept>
 
 BMPHeader::BMPHeader() {
-	file.bfType = 0x4D42;
+	file.bfType = BFType;
 	file.bfReserved1 = 0;
 	file.bfReserved2 = 0;
 	file.bfOffBits = sizeof(BMPFileHeader) + sizeof(BMPInfHeader);
 	file.bfSize = file.bfOffBits;
 
-	inf.biSize = 40;
+	inf.biSize = BISize;
 	inf.biWidth = 0;
 	inf.biHeight = 0;
-	inf.biPlanes = 1;
-	inf.biBitCount = 24;
-	inf.biCompression = 0;
+	inf.biPlanes = Planes;
+	inf.biBitCount = BITCount;
+	inf.biCompression = BICompression;
 	inf.biSizeImage = 0;
 	inf.biXPelsPerMeter = 0;
 	inf.biYPelsPerMeter = 0;
@@ -30,12 +30,12 @@ BMPHeader::BMPHeader() {
 
 
 BMPHeader::BMPHeader(int width, int height) {
-	file.bfType = 0x4D42;
+	file.bfType = BFType;
 	file.bfReserved1 = 0;
 	file.bfReserved2 = 0;
 	file.bfOffBits = sizeof(BMPFileHeader) + sizeof(BMPInfHeader);
 
-	inf.biSize = 40;
+	inf.biSize = BISize;
 
 
 	inf.biWidth = width;
@@ -43,13 +43,13 @@ BMPHeader::BMPHeader(int width, int height) {
 
 	int padding = rowPadding();
 
-	inf.biSizeImage = (width * 3 + padding) * height;
+	inf.biSizeImage = (width * BMPChannels + padding) * height;
 	file.bfSize = file.bfOffBits + inf.biSizeImage;;
 
 
-	inf.biPlanes = 1;
-	inf.biBitCount = 24;
-	inf.biCompression = 0;
+	inf.biPlanes = Planes;
+	inf.biBitCount = BITCount;
+	inf.biCompression = BICompression;
 	inf.biXPelsPerMeter = 0;
 	inf.biYPelsPerMeter = 0;
 	inf.biClrUsed = 0;
@@ -59,8 +59,8 @@ BMPHeader::BMPHeader(int width, int height) {
 
 
 int BMPHeader::rowPadding() const {
-	int rowSize = inf.biWidth * 3;
-	return (4 - (rowSize % 4)) % 4;
+	int rowSize = inf.biWidth * BMPChannels;
+	return (BMPAlignments - (rowSize % BMPAlignments)) % BMPAlignments;
 }
 
 void BMPHeader::loadHeaders(std::ifstream& in) {

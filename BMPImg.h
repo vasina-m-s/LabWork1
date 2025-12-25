@@ -17,6 +17,19 @@
 
 class BMPImg: public Image {
 	public:
+
+		
+		static constexpr int BMPRottation = 1;
+		static constexpr int BMPGaussKernel = 3;
+		
+		static constexpr int BMPChannels = 3;
+
+		static constexpr uint32_t BFType = 0x4D42;
+		static constexpr uint32_t BISize = 40;
+		static constexpr uint32_t Planes = 1;
+		static constexpr uint32_t BITCount= 24;
+		static constexpr uint32_t BICompression = 0;
+
 		//constructor and destructor
 		BMPImg() = default;
 		~BMPImg() override = default;

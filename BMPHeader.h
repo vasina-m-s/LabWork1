@@ -44,7 +44,16 @@ class BMPHeader {
 	public:
 
 		int rowPadding() const;
+		
+		static constexpr int BMPChannels = 3;
+		static constexpr int BMPAlignments =4;
 
+		static constexpr uint32_t BFType = 0x4D42;
+		static constexpr uint32_t BISize = 40;
+		static constexpr uint32_t Planes = 1;
+		static constexpr uint32_t BITCount= 24;
+		static constexpr uint32_t BICompression = 0;
+		
 
 		BMPHeader();
 		BMPHeader(int width, int height);
@@ -73,7 +82,7 @@ class BMPHeader {
 
 		void resize() {
 			int padding = rowPadding();
-			inf.biSizeImage = (inf.biWidth * 3 + padding) * inf.biHeight;
+			inf.biSizeImage = (inf.biWidth * BMPChannels + padding) * inf.biHeight;
 			file.bfSize = file.bfOffBits + inf.biSizeImage;
 		}
 

@@ -18,27 +18,27 @@ void BMPImg::load(const std::string& filename) {
         	throw std::runtime_error("Cannot open file");
 	}
 	header.loadHeaders(in);
-	if (header.file.bfType != 0x4D42)
+	if (header.file.bfType != BFType)
 	{
 		throw std::runtime_error("Not a BMP file");
 	}
 
-	if (header.inf.biBitCount != 24 || header.inf.biCompression != 0)
+	if (header.inf.biBitCount != BITCount || header.inf.biCompression != BICompression)
 	{
-		throw std::runtime_error("Only 24-bit BMP");
+		throw std::runtime_error("Only"+ std::to_string(BITCount) + "-bit BMP");
 	}
 
 	int w = header.inf.biWidth;
 	int h = header.inf.biHeight;
 	int padding = header.rowPadding();
 
-	data.resize(w * h * 3);
+	data.resize(w * h * BMPChannels);
 
 	in.seekg(header.file.bfOffBits, std::ios::beg);
 
 	for (int y = 0; y < h; ++y)
 	{
-		in.read(reinterpret_cast<char*>(&data[y * w * 3]), w * 3);
+		in.read(reinterpret_cast<char*>(&data[y * w * BMPChannels]), w * BMPChannels);
 		in.ignore(padding);
 	}
 }
@@ -57,7 +57,7 @@ void BMPImg::save(const std::string& filename) {
 
 	for (int y = 0; y < height(); ++y)
 	{
-		out.write(reinterpret_cast<const char*>(&data[y * width() * 3]), width() * 3);
+		out.write(reinterpret_cast<const char*>(&data[y * width() * BMPChannels]), width() * BMPChannels);
 		out.write(reinterpret_cast<const char*>(pad.data()), padding);
 	}
 }
@@ -68,15 +68,15 @@ void BMPImg::save(const std::string& filename) {
 void BMPImg::rotate90CW() {
 	int w = width();
 	int h = height();
-	std::vector<uint8_t> result(w * h * 3);
+	std::vector<uint8_t> result(w * h * BMPChannels);
 
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			for (int c = 0; c < 3; ++c)
+			for (int c = 0; c < BMPChannels; ++c)
 			{
-				 result[((w - x - 1) * h + y) * 3 + c] = data[(y * w + x) * 3 + c];
+				 result[((w - x - BMPRottation) * h + y) * BMPChannels + c] = data[(y * w + x) * BMPChannels + c];
 			}
 		}
 	}
@@ -88,15 +88,15 @@ void BMPImg::rotate90CW() {
 void BMPImg::rotate90CCW() {
 	int w = width();
 	int h = height();
-	std::vector<uint8_t> result(w * h * 3);
+	std::vector<uint8_t> result(w * h * BMPChannels);
 
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			for (int c = 0; c < 3; ++c)
+			for (int c = 0; c < BMPChannels; ++c)
 			{
-				result[(x * h + (h - y - 1)) * 3 + c] = data[(y * w + x) * 3 + c];
+				result[(x * h + (h - y - BMPRottation)) * BMPChannels + c] = data[(y * w + x) * BMPChannels + c];
 			}
 		}
 	}
@@ -114,10 +114,10 @@ void BMPImg::GaussFilter() {
 	int h = height();
 	std::vector<unsigned char> result(data.size());
 
-	int kernelSize = 3;
-	int half = kernelSize / 2;
 
-	float kernel[3][3] = {
+	int half = BMPGaussKernel / 2;
+
+	float kernel[BMPGaussKernel][BMPGaussKernel] = {
 	{1/9.0f, 1/9.0f, 1/9.0f},
 	{1/9.0f, 1/9.0f, 1/9.0f},
 	{1/9.0f, 1/9.0f, 1/9.0f}
@@ -161,5 +161,5 @@ void BMPImg::GaussFilter() {
 
 int BMPImg::pixel(int x, int y) const
 {
-    return (y * width() + x) * 3;
+    return (y * width() + x) * BMPChannels;
 }
